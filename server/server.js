@@ -18,9 +18,10 @@ var io = socketIO(server);
 
       socket.broadcast.emit('newMessage',generateMessage('Admin','New user joined'));
 
-     socket.on('createNewMessage',(message) => {
+     socket.on('createNewMessage',(message,callback) => {
        console.log('createNewMessage',message);
        io.emit('newMessage',generateMessage(message.from,message.text));
+       callback('this is from server')
      });
      socket.on('disconnect',(socket) => {
        console.log('The user is disconnected')
