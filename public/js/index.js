@@ -7,8 +7,9 @@ socket.on('connect',() => {
  
   socket.on('newMessage',function (message) {
     console.log('New Message',message);
+    var formmatedTime = moment(message.createdAt).format('LT');
     var li = jQuery('<li></li>');
-    li.text(`${message.from}:${message.text}`);
+    li.text(`${message.from} ${formmatedTime}:${message.text}`);
 
     jQuery('#messages').append(li);
   })
@@ -19,11 +20,12 @@ socket.on('disconnect', () => {
 });
 
   socket.on('newLocationMessage',function (message) {
+    var formmatedTime = moment(message.createdAt).format('LT');
 
     var li  = jQuery('<li></li>');
     var a = jQuery('<a target=""_blank>My Current Location</a>');
 
-    li.text(`${message.from}: `);
+    li.text(`${message.from} ${formmatedTime}: `);
     a.attr('href',message.url);
     li.append(a);
 
