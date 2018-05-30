@@ -3,42 +3,37 @@ var socket = io();
 
 socket.on('connect',() => {
   console.log('Connected to server');
-
- 
-  socket.on('newMessage',function (message) {
-    console.log('New Message',message);
-    var formmatedTime = moment(message.createdAt).format('LT');
-    var li = jQuery('<li></li>');
-    li.text(`${message.from} ${formmatedTime}:${message.text}`);
-
-    jQuery('#messages').append(li);
-  })
 });
-
 socket.on('disconnect', () => {
   console.log('Disconnected from server')
 });
 
+socket.on('newMessage',function (message) {
+  var formmatedTime = moment(message.createdAt).format('LT');
+ var template = jQuery('#message-template').html();
+ var html = Mustache.render(template,{
+   text: message.text,
+   from: message.from,
+   createdAt: formmatedTime
+ });
+
+ jQuery('#messages').append(html);
+
+});
+
   socket.on('newLocationMessage',function (message) {
     var formmatedTime = moment(message.createdAt).format('LT');
+  
+    var template = jQuery('#location-message-template').html();
+    var html = Mustache.render(template,{
+      url:message.url,
+      from: message.from,
+      createdAt: formmatedTime
+    });
 
-    var li  = jQuery('<li></li>');
-    var a = jQuery('<a target=""_blank>My Current Location</a>');
-
-    li.text(`${message.from} ${formmatedTime}: `);
-    a.attr('href',message.url);
-    li.append(a);
-
-    jQuery('#messages').append(li);
-
-  })
-
-// socket.emit('createNewMessage',{
-//   from: 'frank',
-//   text:'hi'
-// }, function(data) {
-//   console.log('got it',data)
-// });
+    jQuery('#messages').append(html);
+  
+  });
 
 jQuery('#message-form').on('submit', function (e) {
 
@@ -78,8 +73,8 @@ navigator.geolocation.getCurrentPosition(function (position) {
   locationButton.removeAttr('disabled').text('send location');
 
   alert('Unable to fetch location');
-});
-});
+})
+})
 
 
 
